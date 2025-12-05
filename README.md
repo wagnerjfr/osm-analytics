@@ -104,5 +104,4 @@ Data courtesy of [OpenStreetMap](https://www.openstreetmap.org/).
 
 ## Screenshots
 
-![Map view](screenshots/map-view.png)
-![Analytics panel](screenshots/analytics-panel
+![Map view](screenshots/mainpage.png)
