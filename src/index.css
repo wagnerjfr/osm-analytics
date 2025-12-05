@@ -1,0 +1,14 @@
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+.sidebar {
+  width: 400px;
+  background: #fafafa;
+  border-left: 1px solid #ddd;
+  padding: 20px;
+  overflow-y: auto;
+}

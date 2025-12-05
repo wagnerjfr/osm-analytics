@@ -1,0 +1,124 @@
+/* MapView.css */
+
+/* ---------------- Whole App Wrapper ---------------- */
+.map-container-wrapper {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #1b1b1d;
+  color: #e5e5e5;
+}
+
+/* ---------------- Input Panel ---------------- */
+.input-panel {
+  padding: 15px;
+  background: #26262a;
+  border: 1px solid #333;
+  box-shadow: 0 3px 15px rgba(0,0,0,0.4);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 10px 15px;
+}
+
+.input-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.input-field-label {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  width: auto;
+  color: #eaeaea;
+}
+
+.input-field-label input[type="number"],
+.input-field-label select {
+  margin-top: 5px;
+  background: #1b1b1d;
+  border: 1px solid #444;
+  color: #eaeaea;
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+
+.input-field-label input[type="number"] {
+  width: 80px;
+}
+
+.input-field-label select {
+  width: 150px;
+}
+
+/* ---------------- Buttons ---------------- */
+.button-primary {
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: none;
+  background: #0d6efd;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.25s, transform 0.1s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.button-primary:hover {
+  background: #0b5ed7;
+  transform: translateY(-1px);
+}
+
+/* ---------------- Status Message ---------------- */
+.status-message {
+  min-width: 220px;
+  height: 24px;
+  line-height: 24px;
+  font-weight: bold;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: #ccc;
+}
+
+.status-message.loading {
+  color: #0d6efd;
+}
+
+.status-message.error,
+.status-message.no-poi {
+  color: #ff4d4d;
+}
+
+/* ---------------- Map Container ---------------- */
+.map-container {
+  height: calc(100vh - 160px);
+  margin: 0 15px 15px 15px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #222;
+}
+
+/* ---------------- Scrollbars ---------------- */
+.poi-list-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.poi-list-container::-webkit-scrollbar-track {
+  background: #1a1a1d;
+}
+
+.poi-list-container::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 4px;
+}
+
+.poi-list-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
