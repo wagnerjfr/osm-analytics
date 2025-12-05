@@ -74,7 +74,7 @@ export default function AnalyticsPanel({ amenities }) {
       <hr style={{ borderColor: "#aaa", margin: "15px 0" }} />
 
       {/* POI List */}
-      <h3>List of POIs</h3>
+      <h3>List of Points of Interest</h3>
       <ul>
         {amenities.map((a) => (
           <li key={a.id}>
