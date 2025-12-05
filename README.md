@@ -1,16 +1,108 @@
-# React + Vite
+# OSM Analytics
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A lightweight React + Leaflet web app to visualize **OpenStreetMap (OSM) Points of Interest (POIs)** in any city. It allows users to explore amenities nearby, view a heatmap, and see analytics with interactive charts.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Demo
 
-## React Compiler
+Live demo available on GitHub Pages:
+[https://wagnerjfr.github.io/osm-analytics](https://wagnerjfr.github.io/osm-analytics)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+* Interactive map with **Leaflet** and OSM tiles
+* Clickable draggable marker to select any location
+* Heatmap visualization of nearby POIs using **Leaflet.heat**
+* Category selection for common POIs:
+
+  * 🚗 Mobility (fuel, charging stations, bicycle rentals)
+  * 🍔 Food (restaurants, fast food, cafes, pubs)
+  * 🛒 Commerce (supermarkets, convenience stores, marketplaces)
+  * 🏫 Education (schools, universities, kindergartens)
+  * 🏥 Health (clinics, hospitals, pharmacies)
+* Quick access to popular sightseeing spots
+* Analytics panel:
+
+  * Bar chart of amenities by type (using **Chart.js**)
+  * List of all nearby POIs
+* Dark/light themed panels for better readability
+
+---
+
+## Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/wagnerjfr/osm-analytics.git
+cd osm-analytics
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+The app will be available at [http://localhost:5173](http://localhost:5173) (default Vite port).
+
+---
+
+## Build & Deploy
+
+### Build for production:
+
+```bash
+npm run build
+```
+
+### Deploy to GitHub Pages:
+
+```bash
+npm run deploy
+```
+
+This uses the `gh-pages` package and the `homepage` property in `package.json` for deployment.
+
+---
+
+## Technologies
+
+* **React 19**
+* **Vite** for development & build
+* **Leaflet** & **react-leaflet** for maps
+* **Leaflet.heat** for heatmaps
+* **Chart.js** & **react-chartjs-2** for analytics charts
+* **GitHub Pages** for hosting
+
+---
+
+## Notes
+
+* Default category on load is **Food**
+* Default map location is **Paris, France** (Eiffel Tower)
+* Data is fetched from **Overpass API** (OpenStreetMap)
+* All markers include name and amenity type, with fallback to "Unnamed POI"
+
+---
+
+## License
+
+This project is licensed under MIT.
+Data courtesy of [OpenStreetMap](https://www.openstreetmap.org/).
+
+---
+
+## Screenshots
+
+![Map view](screenshots/map-view.png)
+![Analytics panel](screenshots/analytics-panel
