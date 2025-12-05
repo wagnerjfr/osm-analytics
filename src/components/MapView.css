@@ -57,6 +57,12 @@
   width: 150px;
 }
 
+.input-panel .sightseeing-select select {
+  background: #1b1b1d;
+  color: #ffd74a;
+  width: 200px;
+}
+
 /* ---------------- Buttons ---------------- */
 .button-primary {
   padding: 8px 18px;

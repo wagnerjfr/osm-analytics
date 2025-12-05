@@ -114,8 +114,12 @@ export default function MapView({ onDataLoaded }) {
   // Trigger query on first load (Food)
   useEffect(() => {
     if (poiTypes) runQuery();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, []); // initial load only
+
+  // ⭐ NEW: autorun when category changes
+  useEffect(() => {
+    if (poiTypes) runQuery();
+  }, [poiTypes]);
 
   return (
     <div className="map-view-wrapper">
@@ -124,6 +128,16 @@ export default function MapView({ onDataLoaded }) {
         <div className="input-row">
           <InputField label="Lat" value={lat} onChange={(v) => setLat(v)} />
           <InputField label="Lon" value={lon} onChange={(v) => setLon(v)} />
+
+          <div className="sightseeing-select">
+            <SightseeingSelector
+              setLat={(v) => setLat(v)}
+              setLon={(v) => setLon(v)}
+              setMapCenter={(c) => setMapCenter(c)}
+              runQuery={(a, b) => runQuery(a, b)}
+            />
+          </div>
+
           <InputField
             label="Radius (m)"
             value={radius}
@@ -138,13 +152,6 @@ export default function MapView({ onDataLoaded }) {
             setPoiTypes={setPoiTypes}
             setSelectedCategoryLabel={setSelectedCategoryLabel}
             defaultValue={poiTypes}
-          />
-
-          <SightseeingSelector
-            setLat={(v) => setLat(v)}
-            setLon={(v) => setLon(v)}
-            setMapCenter={(c) => setMapCenter(c)}
-            runQuery={(a, b) => runQuery(a, b)}
           />
 
           <button onClick={() => runQuery()} disabled={!poiTypes} className="button-primary">
@@ -244,7 +251,6 @@ function CategorySelector({ setPoiTypes, setSelectedCategoryLabel, defaultValue 
         value={defaultValue}
         onChange={(e) => {
           setPoiTypes(e.target.value);
-          setSelectedCategoryLabel(e.target.options[e.target.selectedIndex].text);
         }}
       >
         <option value="">-- Select --</option>
