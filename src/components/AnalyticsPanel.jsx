@@ -21,7 +21,7 @@ export default function AnalyticsPanel({ amenities }) {
     labels: Object.keys(counts),
     datasets: [
       {
-        label: "Amenities in 500m",
+        label: "Amenities in Radius",
         data: Object.values(counts),
         backgroundColor: "rgba(0, 90, 200, 0.7)",
       },
@@ -29,51 +29,11 @@ export default function AnalyticsPanel({ amenities }) {
   };
 
   return (
-    <div
-      className="sidebar"
-      style={{
-        backgroundColor: "#d3d3d3",
-        color: "#1b1b1d",
-        borderRadius: "12px",
-        padding: "15px",
-        boxShadow: "0 4px 15px rgba(0,0,0,0.3)",
-      }}
-    >
-      {/* Title Box */}
-      <div
-        style={{
-          textAlign: "center",
-          backgroundColor: "rgba(0, 90, 200, 0.8)",
-          color: "#fff",
-          fontWeight: "bold",
-          fontSize: "20px",
-          padding: "10px 15px",
-          borderRadius: "10px",
-          textShadow: "1px 1px 3px rgba(0,0,0,0.5)",
-          marginBottom: "15px",
-        }}
-      >
-        <a
-          href="https://www.openstreetmap.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ color: "#fff", textDecoration: "underline" }}
-        >
-          OSM
-        </a>{" "}
-        Analytics Dashboard
-      </div>
+    <div className="sidebar">
+      {/* Removed title — now in header */}
 
-      {/* Chart */}
-      {amenities.length === 0 ? (
-        <p></p>
-      ) : (
-        <Bar data={data} />
-      )}
+      {amenities.length > 0 && <Bar data={data} />}
 
-      <hr style={{ borderColor: "#aaa", margin: "15px 0" }} />
-
-      {/* POI List */}
       <h3>List of Points of Interest</h3>
       <ul>
         {amenities.map((a) => (

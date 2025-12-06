@@ -1,42 +1,71 @@
+/* --------------------------- Root Fix --------------------------- */
+/* Override Vite starter CSS so it doesn't shrink your entire app */
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+  width: 100%;
+  height: 100%;
+}
+
+/* --------------------------- Layout ----------------------------- */
+/* Desktop: map + analytics side-by-side */
+.app-layout {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100vh;
+}
+
+/* Sidebar fixed width so flexbox never wraps */
+.sidebar {
+  width: 350px;
+  flex-shrink: 0;
+}
+
+/* --------------------------- Mobile ----------------------------- */
+/* Use DEVICE WIDTH so desktop windows NEVER trigger mobile mode */
+@media (max-device-width: 768px) {
+  .app-layout {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .sidebar {
+    width: 100% !important;
+    margin-top: 10px;
+  }
+
+  .map-container {
+    height: 55vh !important;
+  }
+}
+
+/* ---------------- Header ---------------- */
+.app-page {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  background: #1b1b1d;
+  color: #fff;
+  padding: 15px 20px;
+  border-bottom: 1px solid #333;
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.app-header h1 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: bold;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.app-header a {
+  color: #4ea3ff;
+  text-decoration: underline;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
