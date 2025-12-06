@@ -36,6 +36,7 @@ const categoryColors = {
 // Sightseeing places (one per city)
 const sightseeingPlaces = {
   "Berlin - TV Tower": [52.5208, 13.4095],
+  "Bangalore - Brigade Road": [12.9719, 77.6086],
   "Dubai - Burj Khalifa": [25.1972, 55.2744],
   "Los Angeles - Downtown": [34.0522, -118.2437],
   "New York - Lower Manhattan": [40.7075, -74.0113],
