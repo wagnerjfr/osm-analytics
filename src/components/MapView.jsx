@@ -56,7 +56,7 @@ export default function MapView({ onDataLoaded }) {
   const [lat, setLat] = useState(48.8588443);
   const [lon, setLon] = useState(2.2943506);
   const [radius, setRadius] = useState(500);
-  const [poiTypes, setPoiTypes] = useState("restaurant|fast_food|cafe|pub"); // Food default
+  const [poiTypes, setPoiTypes] = useState("restaurant|fast_food"); // Food default
   const [selectedCategoryLabel, setSelectedCategoryLabel] = useState("🍔 Food");
   const [mapCenter, setMapCenter] = useState([lat, lon]);
 
@@ -246,13 +246,24 @@ function CategorySelector({ setPoiTypes, setSelectedCategoryLabel, defaultValue 
     "🏫 Education": "school|kindergarten|university",
     "🏥 Health": "clinic|hospital|pharmacy",
   };
+
   return (
     <label className="input-field-label">
       Category:
       <select
         value={defaultValue}
         onChange={(e) => {
-          setPoiTypes(e.target.value);
+          const value = e.target.value;
+          const match = Object.entries(categories).find(
+            ([label, v]) => v === value
+          );
+
+          if (match) {
+            const [label] = match;
+            setSelectedCategoryLabel(label);
+          }
+
+          setPoiTypes(value);
         }}
       >
         <option value="">-- Select --</option>
