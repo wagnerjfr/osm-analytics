@@ -31,6 +31,7 @@ const categoryColors = {
   "🛒 Commerce": "#2ca02c",
   "🏫 Education": "#9467bd",
   "🏥 Health": "#ff7f0e",
+  "☕ Café": "#8c564b",
 };
 
 // Sightseeing places (one per city)
@@ -239,12 +240,12 @@ function InputField({ label, value, onChange, type = "number", min, max, step })
 function CategorySelector({ setPoiTypes, setSelectedCategoryLabel, defaultValue }) {
   const categories = {
     "🚗 Mobility": "fuel|charging_station|bicycle_rental",
-    "🍔 Food": "restaurant|fast_food|cafe|pub",
+    "🍔 Food": "restaurant|fast_food",
+    "☕ Café": "cafe|pub",
     "🛒 Commerce": "supermarket|convenience|marketplace",
     "🏫 Education": "school|kindergarten|university",
     "🏥 Health": "clinic|hospital|pharmacy",
   };
-
   return (
     <label className="input-field-label">
       Category:
