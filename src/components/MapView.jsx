@@ -15,6 +15,34 @@ import "leaflet.heat";
 import L from "leaflet";
 import "./MapView.css";
 
+// -----------------------------------------------
+//  SHARED CATEGORY → AMENITIES MAP (ONE SOURCE)
+// -----------------------------------------------
+export const CATEGORY_MAP = {
+  "🚗 Transport": ["charging_station", "bicycle_rental", "bus_station", "parking", "taxi"],
+  "🍔 Food": ["restaurant", "fast_food"],
+  "☕ Café": ["cafe", "pub"],
+  "🛒 Commerce": ["supermarket", "convenience", "marketplace", "fuel"],
+  "🏫 Education": ["school", "kindergarten", "university"],
+  "🏥 Health": ["clinic", "hospital", "pharmacy"],
+  "🏛️ Public Services": ["police", "fire_station", "post_office", "bank"],
+  "🎭 Recreation": ["theatre", "cinema", "sports_centre"],
+  "🕍 Religious": ["place_of_worship", "church", "mosque", "temple"],
+};
+
+// Category → colors
+const categoryColors = {
+  "🚗 Transport": "#1f77b4",
+  "🍔 Food": "#d62728",
+  "☕ Café": "#8c564b",
+  "🛒 Commerce": "#2ca02c",
+  "🏫 Education": "#9467bd",
+  "🏥 Health": "#424ea1ff",
+  "🏛️ Public Services": "#37a589ff",
+  "🎭 Recreation": "#b3e423ff",
+  "🕍 Religious": "#d222a6ff",
+};
+
 // Default draggable marker icon
 const defaultIcon = new L.Icon({
   iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
@@ -24,17 +52,7 @@ const defaultIcon = new L.Icon({
   popupAnchor: [1, -34],
 });
 
-// Category → colors
-const categoryColors = {
-  "🚗 Mobility": "#1f77b4",
-  "🍔 Food": "#d62728",
-  "☕ Café": "#8c564b",
-  "🛒 Commerce": "#2ca02c",
-  "🏫 Education": "#9467bd",
-  "🏥 Health": "#ff7f0e",
-};
-
-// Sightseeing places
+// Predefined sightseeing places
 const sightseeingPlaces = {
   "Berlin - TV Tower": [52.5208, 13.4095],
   "Bangalore - Brigade Road": [12.9719, 77.6086],
@@ -57,13 +75,16 @@ export default function MapView({ onDataLoaded }) {
   const [lon, setLon] = useState(2.2943506);
   const [radius, setRadius] = useState(500);
 
-  // MULTI CATEGORY SELECTION
+  // MULTI CATEGORY SELECTION STATE
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [poiTypes, setPoiTypes] = useState("");
   const [categoryLabels, setCategoryLabels] = useState([]);
 
   const [mapCenter, setMapCenter] = useState([lat, lon]);
 
+  // -------------------
+  // RUN OVERPASS QUERY
+  // -------------------
   const runQuery = (latParam = null, lonParam = null, radiusParam = null) => {
     if (!poiTypes) return;
 
@@ -114,14 +135,15 @@ export default function MapView({ onDataLoaded }) {
       });
   };
 
+  // DEBOUNCE API calls when categories change
   useEffect(() => {
     if (!poiTypes) return;
 
     const timeoutId = setTimeout(() => {
       runQuery();
-    }, 1500); // wait 500ms after last change
+    }, 1500);
 
-    return () => clearTimeout(timeoutId); // clear previous timeout if poiTypes changes
+    return () => clearTimeout(timeoutId);
   }, [poiTypes]);
 
   return (
@@ -130,8 +152,8 @@ export default function MapView({ onDataLoaded }) {
       {/* INPUT PANEL */}
       <div className="input-panel">
         <div className="input-row">
-          <InputField label="Lat" value={lat} onChange={(v) => setLat(v)} />
-          <InputField label="Lon" value={lon} onChange={(v) => setLon(v)} />
+          <InputField label="Lat" value={lat} onChange={setLat} />
+          <InputField label="Lon" value={lon} onChange={setLon} />
 
           <div className="sightseeing-select">
             <SightseeingSelector
@@ -145,7 +167,7 @@ export default function MapView({ onDataLoaded }) {
           <InputField
             label="Radius (m)"
             value={radius}
-            onChange={(v) => setRadius(v)}
+            onChange={setRadius}
             type="number"
             min={50}
             max={20000}
@@ -168,7 +190,13 @@ export default function MapView({ onDataLoaded }) {
               loading ? "loading" : error ? "error" : !loading && nodes.length === 0 && poiTypes ? "no-poi" : ""
             }`}
           >
-            {loading ? "Loading POIs..." : error ? error : !loading && nodes.length === 0 && poiTypes ? "No POIs found." : ""}
+            {loading
+              ? "Loading POIs..."
+              : error
+              ? error
+              : !loading && nodes.length === 0 && poiTypes
+              ? "No POIs found."
+              : ""}
           </div>
         </div>
       </div>
@@ -180,13 +208,13 @@ export default function MapView({ onDataLoaded }) {
             <LayersControl.BaseLayer checked name="Topographic">
               <TileLayer
                 url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
-                attribution='&copy; OSM'
+                attribution="&copy; OSM"
               />
             </LayersControl.BaseLayer>
             <LayersControl.BaseLayer name="OSM Standard">
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; OSM'
+                attribution="&copy; OSM"
               />
             </LayersControl.BaseLayer>
           </LayersControl>
@@ -196,25 +224,30 @@ export default function MapView({ onDataLoaded }) {
 
           <Heatmap points={nodes} />
 
-          {nodes.map((n) => (
-            <CircleMarker
-              key={n.id}
-              center={[n.lat, n.lon]}
-              radius={6}
-              pathOptions={{
-                color: categoryColors[findCategoryForAmenity(n.tags?.amenity, categoryLabels)] || "#888",
-                fillColor: categoryColors[findCategoryForAmenity(n.tags?.amenity, categoryLabels)] || "#888",
-                fillOpacity: 0.4,
-                weight: 1,
-              }}
-            >
-              <Popup>
-                <b>{n.tags?.name || "Unnamed POI"}</b>
-                <br />
-                {n.tags?.amenity}
-              </Popup>
-            </CircleMarker>
-          ))}
+          {nodes.map((n) => {
+            const cat = findCategoryForAmenity(n.tags?.amenity, categoryLabels);
+            const color = categoryColors[cat] || "#888";
+
+            return (
+              <CircleMarker
+                key={n.id}
+                center={[n.lat, n.lon]}
+                radius={6}
+                pathOptions={{
+                  color,
+                  fillColor: color,
+                  fillOpacity: 0.4,
+                  weight: 1,
+                }}
+              >
+                <Popup>
+                  <b>{n.tags?.name || "Unnamed POI"}</b>
+                  <br />
+                  {n.tags?.amenity}
+                </Popup>
+              </CircleMarker>
+            );
+          })}
 
           <Recenter position={mapCenter} />
         </MapContainer>
@@ -223,19 +256,10 @@ export default function MapView({ onDataLoaded }) {
   );
 }
 
-/* FIND CATEGORY FOR AMENITY (for color coding) */
+/* FIND CATEGORY FOR AMENITY */
 function findCategoryForAmenity(amenity, selected) {
-  const map = {
-    "🚗 Mobility": ["fuel", "charging_station", "bicycle_rental"],
-    "🍔 Food": ["restaurant", "fast_food"],
-    "☕ Café": ["cafe", "pub"],
-    "🛒 Commerce": ["supermarket", "convenience", "marketplace"],
-    "🏫 Education": ["school", "kindergarten", "university"],
-    "🏥 Health": ["clinic", "hospital", "pharmacy"],
-  };
-
   for (const cat of selected) {
-    if (map[cat]?.includes(amenity)) return cat;
+    if (CATEGORY_MAP[cat]?.includes(amenity)) return cat;
   }
   return null;
 }
@@ -257,95 +281,59 @@ function InputField({ label, value, onChange, type = "number", min, max, step })
   );
 }
 
-/* ICON CHECKBOX CATEGORY SELECTOR — COMBOBOX WITH COUNT & CLICK-OUTSIDE CLOSE */
-function IconCheckboxCategories({
-  setPoiTypes,
-  selectedCategories,
-  setSelectedCategories,
-  setCategoryLabels,
-}) {
+/* ICON CHECKBOX CATEGORY SELECTOR */
+function IconCheckboxCategories({ setPoiTypes, selectedCategories, setSelectedCategories, setCategoryLabels }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
-  const categories = {
-    "🚗 Mobility": ["fuel", "charging_station", "bicycle_rental"],
-    "🍔 Food": ["restaurant", "fast_food"],
-    "☕ Café": ["cafe", "pub"],
-    "🛒 Commerce": ["supermarket", "convenience", "marketplace"],
-    "🏫 Education": ["school", "kindergarten", "university"],
-    "🏥 Health": ["clinic", "hospital", "pharmacy"],
-  };
+  const allLabels = Object.keys(CATEGORY_MAP);
 
   const toggle = (label) => {
-    let updated;
-    if (selectedCategories.includes(label)) {
-      updated = selectedCategories.filter((l) => l !== label);
-    } else {
-      updated = [...selectedCategories, label];
-    }
-    setSelectedCategories(updated);
-    setCategoryLabels(updated);
-    const merged = updated.flatMap((l) => categories[l]);
+    const updated = selectedCategories.includes(label)
+      ? selectedCategories.filter((l) => l !== label)
+      : [...selectedCategories, label];
+    applySelection(updated);
+  };
+
+  const applySelection = (list) => {
+    setSelectedCategories(list);
+    setCategoryLabels(list);
+    const merged = list.flatMap((l) => CATEGORY_MAP[l]);
     setPoiTypes(merged.join("|"));
   };
 
-  // Click outside to close
+  const selectAll = () => applySelection(allLabels);
+  const clearAll = () => applySelection([]);
+
   useEffect(() => {
-    const handleClickOutside = (e) => {
+    const handler = (e) => {
       if (ref.current && !ref.current.contains(e.target)) setOpen(false);
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const buttonText =
-    selectedCategories.length === 0
-      ? "All Categories ▾"
-      : `${selectedCategories.length} selected ▾`;
+  const buttonText = selectedCategories.length === 0 ? "Filter Categories ▾" : `${selectedCategories.length} selected ▾`;
 
   return (
-    <div style={{ position: "relative" }} ref={ref}>
-      <button
-        type="button"
-        onClick={() => setOpen(!open)}
-        className="button-primary"
-        style={{ minWidth: "150px" }}
-      >
+    <div className="catbox-wrapper" ref={ref}>
+      <button type="button" onClick={() => setOpen(!open)} className="button-primary catbox-button">
         {buttonText}
       </button>
 
       {open && (
-        <div
-          style={{
-            position: "absolute",
-            top: "42px",
-            left: 0,
-            background: "#1b1b1d",
-            border: "1px solid #333",
-            borderRadius: "8px",
-            padding: "10px",
-            zIndex: 9999,
-            minWidth: "200px",
-            boxShadow: "0 4px 10px rgba(0,0,0,0.4)",
-          }}
-        >
-          {Object.entries(categories).map(([label]) => (
-            <label
-              key={label}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                cursor: "pointer",
-                marginBottom: "6px",
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={selectedCategories.includes(label)}
-                onChange={() => toggle(label)}
-              />
-              <span style={{ fontSize: "15px", color: "#fff" }}>{label}</span>
+        <div className="catbox-dropdown">
+          <div className="catbox-controls">
+            <button className="catbox-control-btn" onClick={selectAll}>Select All</button>
+            <button className="catbox-control-btn" onClick={clearAll}>Clear</button>
+          </div>
+
+          <div className="catbox-divider" />
+
+          {allLabels.map((label) => (
+            <label key={label} className="catbox-item">
+              <input type="checkbox" checked={selectedCategories.includes(label)} onChange={() => toggle(label)} />
+              <span className="catbox-label">{label}</span>
             </label>
           ))}
         </div>
@@ -371,9 +359,7 @@ function SightseeingSelector({ setLat, setLon, setMapCenter, runQuery }) {
       <select onChange={handleChange}>
         <option value="">-- Select a Place --</option>
         {Object.entries(sightseeingPlaces).map(([label, coords]) => (
-          <option key={label} value={coords.join(",")}>
-            {label}
-          </option>
+          <option key={label} value={coords.join(",")}>{label}</option>
         ))}
       </select>
     </label>
@@ -417,29 +403,18 @@ function MapClickHandler({ setLat, setLon }) {
 /* HEATMAP */
 function Heatmap({ points }) {
   const map = useMap();
-
   useEffect(() => {
     if (!points || !points.length) return;
-
     const heatData = points.map((n) => [n.lat, n.lon, 0.7]);
-
-    const heat = L.heatLayer(heatData, {
-      radius: 25,
-      blur: 15,
-      maxZoom: 18,
-    }).addTo(map);
-
+    const heat = L.heatLayer(heatData, { radius: 25, blur: 15, maxZoom: 18 }).addTo(map);
     return () => map.removeLayer(heat);
   }, [points]);
-
   return null;
 }
 
 /* RECENTER */
 function Recenter({ position }) {
   const map = useMap();
-  useEffect(() => {
-    map.setView(position);
-  }, [position]);
+  useEffect(() => { map.setView(position); }, [position]);
   return null;
 }
