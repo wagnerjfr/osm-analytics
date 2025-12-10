@@ -81,6 +81,23 @@
   transform: translateY(-1px);
 }
 
+.button-update {
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: none;
+  background: #ffc107; /* bright yellow */
+  color: #000; /* black text */
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.25s, transform 0.1s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.button-update:hover {
+  background: #e0a800; /* darker yellow for hover */
+  transform: translateY(-1px);
+}
+
 /* ---------------- Status Message ---------------- */
 .status-message {
   min-width: 220px;
