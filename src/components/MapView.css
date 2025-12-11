@@ -145,3 +145,89 @@
 .poi-list-container::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+/* =========================
+   CATEGORY COMBOBOX STYLES
+   ========================= */
+
+.catbox-wrapper {
+  position: relative;
+}
+
+.catbox-button {
+  min-width: 150px;
+}
+
+/* Dropdown container */
+.catbox-dropdown {
+  position: absolute;
+  top: 42px;
+  left: 0;
+  background: #1b1b1d;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 10px;
+  z-index: 9999;
+  min-width: 220px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+
+/* Category Selector Dropdown */
+.catbox-wrapper {
+  position: relative;
+}
+
+.catbox-button {
+  min-width: 150px;
+}
+
+.catbox-dropdown {
+  position: absolute;
+  top: 42px;
+  left: 0;
+  background: #1b1b1d;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 10px;
+  z-index: 9999;
+  min-width: 200px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+
+.catbox-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.catbox-control-btn {
+  padding: 4px 8px;
+  background: #333;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.catbox-control-btn:hover {
+  background: #444;
+}
+
+.catbox-divider {
+  height: 1px;
+  background: #333;
+  margin: 8px 0;
+}
+
+.catbox-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  margin-bottom: 6px;
+}
+
+.catbox-label {
+  font-size: 15px;
+  color: #fff;
+}
