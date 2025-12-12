@@ -1,5 +1,4 @@
 /* --------------------------- Root Fix --------------------------- */
-/* Override Vite starter CSS so it doesn't shrink your entire app */
 #root {
   max-width: none !important;
   margin: 0 !important;
@@ -9,43 +8,10 @@
   height: 100%;
 }
 
-/* --------------------------- Layout ----------------------------- */
-/* Desktop: map + analytics side-by-side */
-.app-layout {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: 100vh;
-}
-
-/* Sidebar fixed width so flexbox never wraps */
-.sidebar {
-  width: 350px;
-  flex-shrink: 0;
-}
-
-/* --------------------------- Mobile ----------------------------- */
-/* Use DEVICE WIDTH so desktop windows NEVER trigger mobile mode */
-@media (max-device-width: 768px) {
-  .app-layout {
-    flex-direction: column;
-    height: auto;
-  }
-
-  .sidebar {
-    width: 100% !important;
-    margin-top: 10px;
-  }
-
-  .map-container {
-    height: 55vh !important;
-  }
-}
-
 /* ---------------- Header ---------------- */
 .app-page {
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
@@ -69,3 +35,71 @@
   text-decoration: underline;
 }
 
+/* ---------------- Layout ----------------------------- */
+.tab-content {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  padding: 12px 15px;
+  height: calc(100vh - 240px);
+  box-sizing: border-box;
+}
+
+.map-panel {
+  flex: 1 1 auto;
+  min-width: 300px;
+  height: 100%;
+}
+
+.analytics-panel {
+  width: 100%;
+  flex-shrink: 0;
+  height: 100%;
+  overflow: auto;
+}
+
+/* --------------------------- Mobile ----------------------------- */
+@media (max-device-width: 768px) {
+  .tab-content {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .analytics-panel {
+    width: 100% !important;
+  }
+
+  .map-container {
+    height: 55vh !important;
+  }
+}
+
+/* Compact input panel for tab selector */
+.selector-panel {
+  margin: 5px 15px;
+  padding: 8px 12px;
+  background: #26262a;
+  border: 1px solid #333;
+  border-radius: 10px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.35);
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* Secondary tab button style */
+.button-secondary {
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: #3a3a3d;
+  color: #ccc;
+  border: 1px solid #444;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.25s, transform 0.1s;
+}
+
+.button-secondary:hover {
+  background: #4a4a4e;
+  transform: translateY(-1px);
+}
