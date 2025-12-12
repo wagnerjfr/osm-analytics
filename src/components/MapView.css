@@ -212,3 +212,44 @@
 .sidebar {
   padding: 10px;
 }
+
+/* Custom Leaflet tooltip */
+.leaflet-tooltip.fade-tooltip {
+  background: #1e1e22;
+  color: #f1f1f1;
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 8px 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+
+  font-size: 13px;
+  line-height: 1.4;
+
+  opacity: 0;
+}
+
+/* When tooltip is visible */
+.leaflet-tooltip.fade-tooltip {
+  background: #1e1e22;
+  color: #f1f1f1;
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 8px 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  font-size: 13px;
+  line-height: 1.4;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.leaflet-tooltip.fade-tooltip.leaflet-tooltip-top,
+.leaflet-tooltip.fade-tooltip.leaflet-tooltip-left,
+.leaflet-tooltip.fade-tooltip.leaflet-tooltip-right,
+.leaflet-tooltip.fade-tooltip.leaflet-tooltip-bottom {
+  opacity: 1;
+}
+
+.leaflet-tooltip.fade-tooltip .distance {
+  font-size: 12px;
+  color: #9aa8ff;
+}

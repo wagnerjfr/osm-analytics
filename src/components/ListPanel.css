@@ -1,0 +1,93 @@
+/* Main container */
+.list-panel {
+  width: 100%;
+  background: #fafafa;
+  overflow-y: auto;
+}
+
+/* Masonry-style columns */
+.category-grid {
+  column-count: 3;
+  column-gap: 16px;
+}
+
+/* Category card */
+.category-group {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+
+  /* Prevent breaking across columns */
+  break-inside: avoid;
+
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Category header */
+.category-group h4 {
+  margin: -12px -12px 10px;
+  padding: 8px 12px;
+
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+
+  background: linear-gradient(135deg, #4c6ef5, #748ffc);
+  color: #ffffff;
+
+  border-radius: 8px 8px 0 0;
+}
+
+.category-group:hover h4 {
+  filter: brightness(1.05);
+}
+
+/* POI list */
+.category-group ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.category-group li {
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.category-group li:last-child {
+  margin-bottom: 0;
+}
+
+/* Distance badge */
+.poi-distance {
+  font-size: 0.85rem;
+  color: #666;
+  white-space: nowrap;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .category-grid {
+    column-count: 2;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .category-grid {
+    column-count: 1;
+  }
+}
+
+.poi-main {
+  display: inline;
+}
+
+.poi-amenity {
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-left: 4px;
+}

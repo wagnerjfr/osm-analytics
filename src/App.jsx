@@ -4,6 +4,7 @@ import MapView, { CATEGORY_MAP } from "./components/MapView";
 import AnalyticsPanel from "./components/AnalyticsPanel";
 import ListPanel from "./components/ListPanel";
 import "./App.css";
+import L from "leaflet";
 
 export default function App() {
   // --- Saved Places ---
@@ -75,7 +76,16 @@ export default function App() {
         if (!res.ok) throw new Error(`HTTP error ${res.status}`);
         return res.json();
       })
-      .then((data) => setAmenities(data.elements || []))
+      .then((data) => {
+        const elements = data.elements || [];
+        // add distance from center to each POI
+        const enriched = elements.map((n) => ({
+          ...n,
+          distance: L.latLng(qLat, qLon).distanceTo(L.latLng(n.lat, n.lon)) // in meters
+        }));
+        setAmenities(enriched);
+      })
+
       .catch((err) => {
         if (err.name === "AbortError") setError("Request timed out. Try again.");
         else setError("Error fetching data: " + err.message);
