@@ -1,3 +1,4 @@
+// AnalyticsPanel.jsx
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -30,18 +31,7 @@ export default function AnalyticsPanel({ amenities }) {
 
   return (
     <div className="sidebar">
-      {/* Removed title — now in header */}
-
       {amenities.length > 0 && <Bar data={data} />}
-
-      <h3>List of Points of Interest</h3>
-      <ul>
-        {amenities.map((a) => (
-          <li key={a.id}>
-            {a.tags?.name || "Unnamed"} ({a.tags?.amenity})
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }
