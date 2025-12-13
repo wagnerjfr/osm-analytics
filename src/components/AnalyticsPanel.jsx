@@ -11,6 +11,7 @@ import {
   Legend,
 } from "chart.js";
 import { CATEGORY_MAP } from "./MapView";
+import "./AnalyticsPanel.css";
 
 ChartJS.register(BarElement, ArcElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -39,7 +40,6 @@ export default function AnalyticsPanel({ amenities }) {
   if (!amenities || amenities.length === 0)
     return <div className="sidebar">No POIs available</div>;
 
-  // ------------------- Category Colors -------------------
   const categoryColors = {
     "🚗 Transport": "#1f77b4",
     "🍔 Food": "#d62728",
@@ -53,7 +53,7 @@ export default function AnalyticsPanel({ amenities }) {
     Other: "#888888",
   };
 
-  // ------------------- Amenity Counts -------------------
+  // ---------------- Amenity Counts ----------------
   const amenityCounts = {};
   amenities.forEach((a) => {
     const type = a.tags?.amenity;
@@ -85,7 +85,7 @@ export default function AnalyticsPanel({ amenities }) {
     ],
   };
 
-  // ------------------- Category Counts -------------------
+  // ---------------- Category Counts ----------------
   const categoryCounts = {};
   amenities.forEach((a) => {
     const type = a.tags?.amenity;
@@ -109,7 +109,7 @@ export default function AnalyticsPanel({ amenities }) {
     ],
   };
 
-  // ------------------- Distance Distribution -------------------
+  // -------------- Distance Distribution ------------
   const bins = [0, 100, 200, 300, 500, 1000, 1500];
   const binLabels = bins.map((b, i) => `${b}-${bins[i + 1] ?? "+"} m`);
   const distanceCounts = bins.map((b, i) => {
@@ -130,29 +130,20 @@ export default function AnalyticsPanel({ amenities }) {
     ],
   };
 
-  // ------------------- Render -------------------
+  // ---------------- Render ----------------
   return (
-    <div
-      className="sidebar"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "24px",
-        padding: "10px",
-        overflowY: "auto",
-      }}
-    >
-      <div>
+    <div className="analytics-grid">
+      <div className="chart-panel">
         <h4>Amenity Types</h4>
         <Bar key="amenity-chart" data={amenityData} options={{ responsive: true }} />
       </div>
 
-      <div>
+      <div className="chart-panel">
         <h4>POIs per Category</h4>
         <Pie key="category-chart" data={categoryData} options={{ responsive: true }} />
       </div>
 
-      <div>
+      <div className="chart-panel">
         <h4>Distance Distribution</h4>
         <Bar key="distance-chart" data={distanceData} options={{ responsive: true }} />
       </div>
