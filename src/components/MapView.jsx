@@ -1,10 +1,11 @@
 // MapView.jsx
-import { useEffect } from "react";
-import { MapContainer, TileLayer, CircleMarker, Popup, Marker, useMap, useMapEvents, LayersControl } from "react-leaflet";
+import { useEffect, useState } from "react";
+import { MapContainer, TileLayer, CircleMarker, Popup, Tooltip, Marker, useMap, useMapEvents, LayersControl } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet.heat";
 import L from "leaflet";
 import "./MapView.css";
+
 
 /* CATEGORY MAP (exported so App/InputPanel can use it) */
 export const CATEGORY_MAP = {
@@ -42,6 +43,7 @@ const defaultIcon = new L.Icon({
 export default function MapView({ lat, lon, setLat, setLon, radius = 500, amenities = [], categoryLabels = [], runQuery }) {
   // keep map center in sync with lat/lon changes
   const mapCenter = [lat, lon];
+  const [stickyPoiId, setStickyPoiId] = useState(null);
 
   return (
     <div className="map-container">
@@ -69,6 +71,7 @@ export default function MapView({ lat, lon, setLat, setLon, radius = 500, amenit
         {amenities.map((n) => {
           const cat = findCategoryForAmenity(n.tags?.amenity, categoryLabels);
           const color = categoryColors[cat] || "#888";
+          const isSticky = stickyPoiId === n.id;
 
           return (
             <CircleMarker
@@ -81,12 +84,50 @@ export default function MapView({ lat, lon, setLat, setLon, radius = 500, amenit
                 fillOpacity: 0.6,
                 weight: 1,
               }}
+              eventHandlers={{
+                click: () =>
+                  setStickyPoiId(isSticky ? null : n.id),
+              }}
             >
-              <Popup>
-                <b>{n.tags?.name || "Unnamed POI"}</b>
-                <br />
-                {n.tags?.amenity}
-              </Popup>
+              {/* Hover tooltip (only when NOT sticky) */}
+              {!isSticky && (
+                <Tooltip
+                  direction="top"
+                  offset={[0, -10]}
+                  className="fade-tooltip"
+                >
+                  <span>
+                    <b>{n.tags?.name || "Unnamed POI"}</b>
+                    <br />
+                    {n.tags?.amenity}
+                    <br />
+                    <span className="distance">
+                      {n.distance?.toFixed(0)} m away
+                    </span>
+                  </span>
+                </Tooltip>
+              )}
+
+              {/* Sticky tooltip (click-to-stick) */}
+              {isSticky && (
+                <Tooltip
+                  direction="top"
+                  offset={[0, -10]}
+                  className="fade-tooltip"
+                  permanent
+                  interactive
+                >
+                  <span>
+                    <b>{n.tags?.name || "Unnamed POI"}</b>
+                    <br />
+                    {n.tags?.amenity}
+                    <br />
+                    <span className="distance">
+                      {n.distance?.toFixed(0)} m away
+                    </span>
+                  </span>
+                </Tooltip>
+              )}
             </CircleMarker>
           );
         })}
