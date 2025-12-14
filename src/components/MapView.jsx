@@ -14,7 +14,7 @@ const defaultIcon = new L.Icon({
   popupAnchor: [1, -34],
 });
 
-export default function MapView({ lat, lon, setLat, setLon, radius = 500, amenities = [], categoryLabels = [], runQuery }) {
+export default function MapView({ lat, lon, setLat, setLon, setSavedPlace, radius = 500, amenities = [], categoryLabels = [], runQuery }) {
   const mapCenter = [lat, lon];
   const [stickyPoiId, setStickyPoiId] = useState(null);
 
@@ -30,8 +30,8 @@ export default function MapView({ lat, lon, setLat, setLon, radius = 500, amenit
           </LayersControl.BaseLayer>
         </LayersControl>
 
-        <MapClickHandler setLat={setLat} setLon={setLon} />
-        <DraggableMarker lat={lat} lon={lon} setLat={setLat} setLon={setLon} runQuery={runQuery} />
+        <MapClickHandler setLat={setLat} setLon={setLon} setSavedPlace={setSavedPlace} runQuery={runQuery} />
+        <DraggableMarker lat={lat} lon={lon} setLat={setLat} setLon={setLon} setSavedPlace={setSavedPlace} runQuery={runQuery} />
         <Heatmap points={amenities} />
 
         {amenities.map((n) => {
@@ -83,7 +83,7 @@ function findCategoryForAmenity(amenity, selected) {
   return null;
 }
 
-function DraggableMarker({ lat, lon, setLat, setLon, runQuery }) {
+function DraggableMarker({ lat, lon, setLat, setLon, setSavedPlace, runQuery }) {
   return (
     <Marker
       position={[lat, lon]}
@@ -94,6 +94,7 @@ function DraggableMarker({ lat, lon, setLat, setLon, runQuery }) {
           const { lat, lng } = e.target.getLatLng();
           setLat(lat);
           setLon(lng);
+          setSavedPlace("");
           runQuery?.(lat, lng);
         },
       }}
@@ -101,9 +102,15 @@ function DraggableMarker({ lat, lon, setLat, setLon, runQuery }) {
   );
 }
 
-function MapClickHandler({ setLat, setLon }) {
+function MapClickHandler({ setLat, setLon, setSavedPlace, runQuery }) {
   useMapEvents({
-    click(e) { setLat(e.latlng.lat); setLon(e.latlng.lng); },
+    click(e) {
+      const { lat, lng } = e.latlng;
+      setLat(lat);
+      setLon(lng);
+      setSavedPlace("");
+      runQuery?.(lat, lng);
+    },
   });
   return null;
 }

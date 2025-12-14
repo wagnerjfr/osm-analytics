@@ -36,12 +36,12 @@ export default function App() {
   // --- all categories selected by default ---
   const allCategories = Object.keys(CATEGORY_MAP);
   const [selectedCategories, setSelectedCategories] = useState(allCategories);
+  const [catOpen, setCatOpen] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("map"); // map, analytics, list
-  const debounceRef = useRef(null);
-
+  
   // --- Fetch POIs from Overpass ---
   const runQuery = (latParam = null, lonParam = null, radiusParam = null) => {
     const qLat = latParam ?? lat;
@@ -128,16 +128,15 @@ export default function App() {
   };
 
   // --- Input Panel ---
-  function InputPanel() {
-    const [catOpen, setCatOpen] = useState(false);
+  function InputPanel({ catOpen, setCatOpen }) {
     const ref = useRef(null);
 
     useEffect(() => {
       const handler = (e) => {
         if (ref.current && !ref.current.contains(e.target)) setCatOpen(false);
       };
-      document.addEventListener("mousedown", handler);
-      return () => document.removeEventListener("mousedown", handler);
+      document.addEventListener("click", handler);
+      return () => document.removeEventListener("click", handler);
     }, []);
 
     const allLabels = Object.keys(CATEGORY_MAP);
@@ -235,14 +234,17 @@ export default function App() {
           <div className="catbox-wrapper" ref={ref}>
             <button
               type="button"
-              onClick={() => setCatOpen(!catOpen)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setCatOpen(!catOpen);
+              }}
               className="button-primary catbox-button"
             >
               {buttonText}
             </button>
 
             {catOpen && (
-              <div className="catbox-dropdown">
+              <div className="catbox-dropdown" onClick={(e) => e.stopPropagation()}>
                 <div className="catbox-controls">
                   <button className="catbox-control-btn" onClick={selectAll}>Select All</button>
                   <button className="catbox-control-btn" onClick={clearAll}>Clear</button>
@@ -295,7 +297,7 @@ export default function App() {
         </h1>
       </header>
 
-      <InputPanel />
+      <InputPanel catOpen={catOpen} setCatOpen={setCatOpen} />
 
       {/* Tabs */}
       <div className="selector-panel">
@@ -303,6 +305,7 @@ export default function App() {
           className={activeTab === "map" ? "button-primary" : "button-secondary"}
           onClick={() => setActiveTab("map")}
         >
+          <span className="leaflet-icon">📍</span>
           Map
         </button>
 
@@ -310,6 +313,7 @@ export default function App() {
           className={activeTab === "analytics" ? "button-primary" : "button-secondary"}
           onClick={() => setActiveTab("analytics")}
         >
+          <span className="leaflet-icon">📊</span>
           Analytics
         </button>
 
@@ -317,6 +321,7 @@ export default function App() {
           className={activeTab === "list" ? "button-primary" : "button-secondary"}
           onClick={() => setActiveTab("list")}
         >
+          <span className="leaflet-icon">🗂</span>
           List
         </button>
       </div>
@@ -330,6 +335,7 @@ export default function App() {
               lon={lon}
               setLat={setLat}
               setLon={setLon}
+              setSavedPlace={setSavedPlace}
               radius={radius}
               amenities={amenities}
               categoryLabels={selectedCategories}
