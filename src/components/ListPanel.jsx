@@ -1,8 +1,9 @@
-import { CATEGORY_MAP } from "./MapView";
+// ListPanel.jsx
+import { CATEGORY_MAP } from "../constants/categories"; // <- updated import
 import "./ListPanel.css";
 
 export default function ListPanel({ amenities }) {
-  if (amenities.length === 0) {
+  if (!amenities || amenities.length === 0) {
     return (
       <div className="list-panel">
         <h3>List of Points of Interest</h3>

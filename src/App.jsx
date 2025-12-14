@@ -1,6 +1,7 @@
 // App.jsx
 import { useEffect, useState, useRef } from "react";
-import MapView, { CATEGORY_MAP } from "./components/MapView";
+import MapView from "./components/MapView";
+import { CATEGORY_MAP } from "./constants/categories";
 import AnalyticsPanel from "./components/AnalyticsPanel";
 import ListPanel from "./components/ListPanel";
 import "./App.css";
@@ -25,7 +26,8 @@ export default function App() {
   const defaultPlace = savedPlaces.find(p => p.name.includes("New York - Lower Manhattan"));
 
   // --- central state ---
-  const [amenities, setAmenities] = useState([]);
+  const [allAmenities, setAllAmenities] = useState([]); // full API results
+  const [amenities, setAmenities] = useState([]); // filtered POIs
   const [lat, setLat] = useState(defaultPlace.lat);
   const [lon, setLon] = useState(defaultPlace.lon);
   const [savedPlace, setSavedPlace] = useState(`${defaultPlace.lat},${defaultPlace.lon}`);
@@ -34,7 +36,6 @@ export default function App() {
   // --- all categories selected by default ---
   const allCategories = Object.keys(CATEGORY_MAP);
   const [selectedCategories, setSelectedCategories] = useState(allCategories);
-  const [poiTypes, setPoiTypes] = useState(allCategories.flatMap(label => CATEGORY_MAP[label]).join("|"));
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -43,13 +44,6 @@ export default function App() {
 
   // --- Fetch POIs from Overpass ---
   const runQuery = (latParam = null, lonParam = null, radiusParam = null) => {
-    if (!poiTypes) {
-      setAmenities([]);
-      setError("");
-      setLoading(false);
-      return;
-    }
-
     const qLat = latParam ?? lat;
     const qLon = lonParam ?? lon;
     const qRadius = radiusParam ?? radius;
@@ -64,7 +58,7 @@ export default function App() {
       [out:json][timeout:25];
       node
         (around:${qRadius}, ${qLat}, ${qLon})
-        ["amenity"~"${poiTypes}"];
+        ["amenity"];
       out;
     `;
 
@@ -78,17 +72,17 @@ export default function App() {
       })
       .then((data) => {
         const elements = data.elements || [];
-        // add distance from center to each POI
         const enriched = elements.map((n) => ({
           ...n,
-          distance: L.latLng(qLat, qLon).distanceTo(L.latLng(n.lat, n.lon)) // in meters
+          distance: L.latLng(qLat, qLon).distanceTo(L.latLng(n.lat, n.lon)),
         }));
-        setAmenities(enriched);
+        setAllAmenities(enriched);
+        filterAmenities(enriched, selectedCategories); // filter locally
       })
-
       .catch((err) => {
         if (err.name === "AbortError") setError("Request timed out. Try again.");
         else setError("Error fetching data: " + err.message);
+        setAllAmenities([]);
         setAmenities([]);
       })
       .finally(() => {
@@ -97,17 +91,23 @@ export default function App() {
       });
   };
 
-  // --- Debounce automatic query when poiTypes changes ---
-  useEffect(() => {
-    if (!poiTypes) return;
+  // --- Local filtering by category ---
+  const filterAmenities = (list, categories) => {
+    if (!list || !categories?.length) {
+      setAmenities([]);
+      return;
+    }
 
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => runQuery(), 500);
+    const filtered = list.filter((poi) => {
+      const amenity = poi.tags?.amenity;
+      for (const cat of categories) {
+        if (CATEGORY_MAP[cat]?.includes(amenity)) return true;
+      }
+      return false;
+    });
 
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
-  }, [poiTypes]);
+    setAmenities(filtered);
+  };
 
   // --- Set coords from Saved Places ---
   const handleSetCoordsAndQuery = (newLat, newLon) => {
@@ -146,13 +146,14 @@ export default function App() {
       const updated = selectedCategories.includes(label)
         ? selectedCategories.filter((l) => l !== label)
         : [...selectedCategories, label];
-      applySelection(updated);
+
+      setSelectedCategories(updated);
+      filterAmenities(allAmenities, updated); // local filtering
     };
 
     const applySelection = (list) => {
       setSelectedCategories(list);
-      const merged = list.flatMap((l) => CATEGORY_MAP[l]);
-      setPoiTypes(merged.join("|"));
+      filterAmenities(allAmenities, list); // local filtering
     };
 
     const selectAll = () => applySelection(allLabels);
@@ -265,7 +266,7 @@ export default function App() {
 
           <button
             onClick={() => runQuery()}
-            disabled={!poiTypes || loading}
+            disabled={loading}
             className="button-update"
           >
             Update Map
@@ -273,10 +274,10 @@ export default function App() {
 
           <div
             className={`status-message ${
-              loading ? "loading" : error ? "error" : !loading && amenities.length === 0 && poiTypes ? "no-poi" : ""
+              loading ? "loading" : error ? "error" : !loading && amenities.length === 0 && selectedCategories.length ? "no-poi" : ""
             }`}
           >
-            {loading ? "Loading POIs..." : error ? error : !loading && amenities.length === 0 && poiTypes ? "No POIs found." : ""}
+            {loading ? "Loading POIs..." : error ? error : !loading && amenities.length === 0 && selectedCategories.length ? "No POIs found." : ""}
           </div>
         </div>
       </div>
