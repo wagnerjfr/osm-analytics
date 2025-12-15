@@ -103,3 +103,11 @@
   background: #4a4a4e;
   transform: translateY(-1px);
 }
+
+.leaflet-icon {
+  margin-right: 6px;
+  font-size: 1.1em;
+  line-height: 1;
+  vertical-align: middle;
+  opacity: 0.85;
+}
